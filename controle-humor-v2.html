@@ -472,6 +472,132 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   .scale-row { flex-direction: column; align-items: flex-start; }
   .scale-lbl { min-width: unset; }
 }
+
+/* ── MANUAL ── */
+#manualPage { display: none; padding: 0 1rem 4rem; max-width: 700px; margin: 0 auto; }
+
+.manual-topbar {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 1.25rem 0 1.75rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+}
+.manual-topbar h2 { font-family: 'Fraunces', serif; font-weight: 300; font-size: 1.1rem; }
+
+.manual-intro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-dim);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+.manual-intro strong { color: var(--text); display: block; margin-bottom: 0.5rem; font-family: 'Fraunces', serif; font-weight: 300; font-size: 1rem; }
+
+.manual-chapter {
+  margin-bottom: 2.5rem;
+}
+.chapter-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.4rem;
+}
+.chapter-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.manual-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.manual-card-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.manual-card-title .mc-icon { font-size: 1rem; }
+.manual-card p, .manual-card li {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+.manual-card ul { padding-left: 1.25rem; margin-top: 0.4rem; }
+.manual-card li { margin-bottom: 0.2rem; }
+
+.step-list { counter-reset: steps; list-style: none; padding: 0; }
+.step-list li {
+  counter-increment: steps;
+  display: flex; gap: 1rem; align-items: flex-start;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.step-list li:last-child { border-bottom: none; }
+.step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  background: var(--surface3);
+  color: var(--text-dim);
+  border-radius: 50%;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+.step-list li strong { color: var(--text); }
+
+.risk-legend { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
+.rl-item { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8rem; }
+.rl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.rl-text { color: var(--text-muted); line-height: 1.5; }
+.rl-text strong { color: var(--text); }
+
+.two-col-manual { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+.highlight-box {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-top: 0.75rem;
+}
+.highlight-box strong { color: var(--text); }
+
+.tag-her { background: var(--her-dim); color: var(--her); border: 1px solid rgba(196,149,106,0.3); border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; }
+.tag-you { background: var(--you-dim); color: var(--you); border: 1px solid rgba(106,158,196,0.3); border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; }
+
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  padding: 0.9rem 0;
+}
+.faq-item:last-child { border-bottom: none; }
+.faq-q { font-size: 0.83rem; font-weight: 500; color: var(--text); margin-bottom: 0.35rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.faq-q .faq-arrow { color: var(--text-dim); font-size: 0.7rem; transition: transform 0.2s; }
+.faq-q.open .faq-arrow { transform: rotate(180deg); }
+.faq-a { font-size: 0.8rem; color: var(--text-muted); line-height: 1.8; display: none; padding-top: 0.25rem; }
+.faq-a.open { display: block; }
 </style>
 </head>
 <body>
@@ -497,6 +623,250 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     </div>
   </div>
   <button class="compare-btn" onclick="openCompare()">⇄ Comparar registros</button>
+  <button class="compare-btn" style="margin-top:0.5rem;" onclick="openManual()">📖 Manual de uso</button>
+</div>
+
+<!-- ══ MANUAL PAGE ══════════════════════════════════════════ -->
+<div id="manualPage">
+  <div class="manual-topbar">
+    <button class="back-btn" onclick="goHome()">← voltar</button>
+    <h2>Manual de uso</h2>
+  </div>
+
+  <div class="manual-intro">
+    <strong>O que é este formulário e para que serve</strong>
+    Este é um diário clínico de monitoramento de humor com duas perspectivas: a autopercepção de quem vive o estado emocional e a observação externa do cuidador. O objetivo é registrar padrões ao longo do tempo, identificar sinais de alerta precoce e fornecer dados concretos para a psiquiatra — complementando o que é relatado nas consultas com observações do dia a dia. <strong>Não substitui avaliação clínica profissional.</strong>
+  </div>
+
+  <!-- CAP 1 -->
+  <div class="manual-chapter">
+    <div class="chapter-label">Capítulo 01</div>
+    <div class="chapter-title">Como o formulário funciona</div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">🏗</span> Estrutura geral</div>
+      <p>O formulário tem três telas principais acessadas pela tela inicial:</p>
+      <ul>
+        <li><strong>🌸 Ela</strong> — formulário em primeira pessoa, para ela preencher sozinha sobre como se sentiu</li>
+        <li><strong>👁 Você</strong> — formulário em terceira pessoa, para você preencher sobre o que observou nela</li>
+        <li><strong>⇄ Comparar</strong> — tela que coloca os dois registros lado a lado e analisa divergências</li>
+      </ul>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">🔒</span> Princípio das respostas cegas</div>
+      <p>Cada um preenche <em>sem ver o que o outro registrou</em>. Só na tela de comparação os dois registros ficam visíveis juntos. Isso garante que as respostas sejam independentes — sem influência mútua. A divergência entre as perspectivas é, ela mesma, uma informação clínica valiosa.</p>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">💾</span> Onde os dados ficam salvos</div>
+      <p>Todos os registros são salvos no armazenamento local do navegador (<em>localStorage</em>) do dispositivo em que o formulário é aberto. Isso significa que os dados não vão para nenhum servidor externo — ficam apenas no dispositivo. Se você e ela usam o mesmo dispositivo, os registros de ambos ficam disponíveis na mesma sessão. Se usarem dispositivos diferentes, os dados ficam separados em cada aparelho.</p>
+    </div>
+  </div>
+
+  <!-- CAP 2 -->
+  <div class="manual-chapter">
+    <div class="chapter-label">Capítulo 02</div>
+    <div class="chapter-title">Rotina de uso recomendada</div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">📅</span> Frequência ideal</div>
+      <p>O preenchimento diário é o mais útil clinicamente, pois permite identificar padrões de dias, semanas e ciclos. Se o dia a dia for difícil, o mínimo recomendado é registrar sempre que houver uma mudança perceptível de estado — especialmente quando o humor ou a energia parecerem muito diferentes do habitual.</p>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">🕐</span> Melhor horário para preencher</div>
+      <p>O ideal é preencher ao final do dia, quando você tem uma visão mais completa de como foi. Se o estado variar muito ao longo do dia, registre o período mais intenso ou mais representativo e use o campo "Variação no dia" para indicar isso. Evite preencher no meio de um episódio intenso — o preenchimento pós-crise tende a ser mais preciso.</p>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">📋</span> Fluxo sugerido para o casal</div>
+      <ol class="step-list">
+        <li><span class="step-num">1</span><div>Ela abre o formulário e escolhe <span class="tag-her">Ela</span> — preenche sozinha, sem mostrar as respostas</div></li>
+        <li><span class="step-num">2</span><div>Ela salva e devolve o dispositivo (ou você abre no seu)</div></li>
+        <li><span class="step-num">3</span><div>Você escolhe <span class="tag-you">Você</span> e preenche suas observações do dia de forma independente</div></li>
+        <li><span class="step-num">4</span><div>Você salva — os dois registros agora estão gravados com a mesma data</div></li>
+        <li><span class="step-num">5</span><div>Quando quiserem (pode ser no mesmo dia ou depois), abrem <strong>Comparar registros</strong>, selecionam a data e veem as perspectivas lado a lado</div></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- CAP 3 -->
+  <div class="manual-chapter">
+    <div class="chapter-label">Capítulo 03</div>
+    <div class="chapter-title">Entendendo cada seção do formulário</div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">01</span> Data e contexto</div>
+      <p>Registra quando foi e o período do dia. O campo de <strong>sono</strong> é um dos mais importantes do formulário — alterações no sono são frequentemente o primeiro sinal de uma mudança de estado, especialmente em episódios maníacos ou hipomaníacos, onde a necessidade de dormir diminui antes de qualquer outro sintoma aparecer.</p>
+      <div class="highlight-box">⚠ <strong>Menos de 3h de sono ou noite em branco</strong> dispara pontuação alta no índice de risco automaticamente, mesmo que os outros campos pareçam normais.</div>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">02</span> Estado de humor geral</div>
+      <p>Selecione o humor <em>predominante</em> do dia — não o momento mais intenso nem o mais tranquilo, mas o que durou mais ou teve mais impacto. As opções incluem:</p>
+      <ul>
+        <li><strong>Estável</strong> — sem oscilações significativas, estado basal</li>
+        <li><strong>Triste / Apático</strong> — espectro depressivo, com ou sem motivação</li>
+        <li><strong>Ansioso</strong> — tensão, preocupação excessiva, inquietação</li>
+        <li><strong>Irritável</strong> — baixa tolerância, reatividade aumentada</li>
+        <li><strong>Eufórico</strong> — alegria intensa, expansividade, energia elevada</li>
+        <li><strong>Grandioso</strong> — sensação de capacidade ou importância aumentada, planos grandiosos</li>
+        <li><strong>Misto</strong> — estados contraditórios simultâneos (agitação + choro, euforia + irritação)</li>
+      </ul>
+      <div class="highlight-box"><strong>Eufórico, Grandioso e Misto</strong> têm peso maior no cálculo de risco por serem marcadores mais específicos de episódios maníacos ou mistos.</div>
+      <p style="margin-top:0.75rem;">As <strong>escalas de 1 a 5</strong> complementam o tipo de humor com a intensidade:</p>
+      <ul>
+        <li><strong>Intensidade geral</strong> — o quanto aquele estado estava presente com força</li>
+        <li><strong>Variação no dia</strong> — o quanto o humor mudou ao longo das horas. Variação alta (4–5) indica instabilidade e pode ser mais relevante do que o tipo de humor em si</li>
+      </ul>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">03</span> Comportamento e energia</div>
+      <p>A escala de <strong>energia percebida</strong> (1–5) é especialmente útil para comparação entre perspectivas — ela pode sentir que está com energia normal enquanto você observa uma aceleração importante, ou vice-versa.</p>
+      <p style="margin-top:0.6rem;">Os <strong>chips de comportamento</strong> são clicáveis e representam sinais observáveis frequentes. Alguns merecem atenção especial:</p>
+      <ul>
+        <li><strong>Fala e pensamento acelerados</strong> — clássicos da fase maníaca/hipomaníaca</li>
+        <li><strong>Grandiosidade / Desinibição sexual / Gastos excessivos</strong> — comportamentos de risco associados à mania</li>
+        <li><strong>Paranoia / Pensamento desorganizado</strong> — podem indicar episódio mais grave</li>
+        <li><strong>Prostração / Isolamento / Sem apetite</strong> — espectro depressivo</li>
+      </ul>
+      <p style="margin-top:0.6rem;">O campo de <strong>medicação</strong> é importante: a não adesão ao tratamento é um fator de risco independente e tem peso significativo no índice calculado.</p>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">04</span> Sinais de alerta</div>
+      <p>Esta seção contém os <strong>marcadores de maior gravidade</strong>. Cada um selecionado adiciona peso alto ao índice de risco. Eles representam situações que merecem contato com a psiquiatra independentemente do restante do formulário:</p>
+      <ul>
+        <li><strong>Sem dormir 24h+</strong> — privação total de sono é urgente</li>
+        <li><strong>Grandiosidade extrema</strong> — diferente da euforia comum; envolve crenças de poder ou missão especial</li>
+        <li><strong>Comportamento de risco</strong> — direção perigosa, sexo desprotegido com desconhecidos, decisões financeiras impulsivas irreversíveis</li>
+        <li><strong>Pensamentos de autolesão</strong> — qualquer menção, direta ou indireta, deve ser levada a sério e comunicada à equipe de saúde imediatamente</li>
+        <li><strong>Contato com realidade prejudicado</strong> — confusão sobre onde está, quem são as pessoas, percepções que não correspondem ao real</li>
+        <li><strong>Fuga de ideias intensa</strong> — pensamentos tão acelerados que ela não consegue terminar um raciocínio antes de pular para outro</li>
+      </ul>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">05</span> Observações livres</div>
+      <p>Use este espaço para registrar qualquer coisa que não coube nas opções anteriores — falas específicas que chamaram atenção, situações concretas, mudanças sutis que você sentiu mas não sabe nomear. Esses relatos textuais são frequentemente os mais úteis para a psiquiatra, pois trazem contexto que os campos estruturados não capturam.</p>
+      <div class="highlight-box">Exemplos úteis: <em>"Disse que vai largar o emprego e abrir três negócios essa semana"</em>, <em>"Ficou duas horas repassando a mesma conversa em loop"</em>, <em>"Chorou sem conseguir explicar por quê, depois estava rindo normalmente"</em>.</div>
+    </div>
+  </div>
+
+  <!-- CAP 4 -->
+  <div class="manual-chapter">
+    <div class="chapter-label">Capítulo 04</div>
+    <div class="chapter-title">O índice de risco</div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">📊</span> Como é calculado</div>
+      <p>O índice é calculado automaticamente em tempo real conforme você preenche. Ele combina os seguintes fatores com pesos diferentes:</p>
+      <ul>
+        <li>Sinais de alerta (maior peso individual)</li>
+        <li>Não adesão à medicação</li>
+        <li>Privação de sono</li>
+        <li>Tipo de humor (eufórico, grandioso, misto têm peso maior)</li>
+        <li>Intensidade e energia acima de 4/5</li>
+        <li>Quantidade de comportamentos marcados</li>
+      </ul>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">🎨</span> O que cada nível significa</div>
+      <div class="risk-legend">
+        <div class="rl-item"><div class="rl-dot" style="background:var(--ok)"></div><div class="rl-text"><strong>Baixo</strong> — sem sinais preocupantes no momento. Continue monitorando normalmente.</div></div>
+        <div class="rl-item"><div class="rl-dot" style="background:var(--warn)"></div><div class="rl-text"><strong>Moderado</strong> — atenção aumentada. Observe os próximos dias com cuidado. Não é necessário contato imediato com a psiquiatra, mas vale registrar.</div></div>
+        <div class="rl-item"><div class="rl-dot" style="background:var(--high)"></div><div class="rl-text"><strong>Alto</strong> — considere entrar em contato com a psiquiatra nas próximas 24–48h. Não espere a próxima consulta agendada.</div></div>
+        <div class="rl-item"><div class="rl-dot" style="background:var(--crit)"></div><div class="rl-text"><strong>Crítico</strong> — entre em contato hoje. Se houver pensamentos de autolesão ou perda de contato com a realidade, busque atendimento de urgência.</div></div>
+      </div>
+      <div class="highlight-box" style="margin-top:1rem;"><strong>Importante:</strong> o índice é uma ferramenta de apoio, não um diagnóstico. Um índice baixo não significa que está tudo bem se você observou algo que te preocupa. Confie na sua percepção — e na dela.</div>
+    </div>
+  </div>
+
+  <!-- CAP 5 -->
+  <div class="manual-chapter">
+    <div class="chapter-label">Capítulo 05</div>
+    <div class="chapter-title">A tela de comparação</div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">⇄</span> Como interpretar as divergências</div>
+      <p>A análise automática classifica cada ponto de comparação com três cores:</p>
+      <div class="risk-legend" style="margin-top:0.5rem;">
+        <div class="rl-item"><div class="rl-dot" style="background:var(--ok)"></div><div class="rl-text"><strong>Verde</strong> — perspectivas alinhadas. Ambos perceberam o mesmo estado.</div></div>
+        <div class="rl-item"><div class="rl-dot" style="background:var(--warn)"></div><div class="rl-text"><strong>Amarelo</strong> — pequena divergência. Pode ser diferença de perspectiva normal ou dissimulação leve.</div></div>
+        <div class="rl-item"><div class="rl-dot" style="background:var(--crit)"></div><div class="rl-text"><strong>Vermelho</strong> — divergência significativa. Merece conversa entre vocês e, se frequente, atenção da psiquiatra.</div></div>
+      </div>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">🔍</span> O que as divergências podem indicar</div>
+      <ul>
+        <li><strong>Ela avalia intensidade menor do que você observa</strong> — frequente em episódios com insight reduzido. A pessoa dentro do episódio nem sempre consegue perceber a própria aceleração ou a gravidade do estado.</li>
+        <li><strong>Ela avalia intensidade maior do que você observa</strong> — pode indicar sofrimento interno que não está sendo externalizado. Comum em episódios depressivos ou em quem aprendeu a "funcionar normalmente" mesmo sofrendo.</li>
+        <li><strong>Humor diferentes</strong> — ela se sentiu irritável, você observou eufória, por exemplo. Pode ser que um dos dois tenha captado o estado de forma diferente, ou que o estado tenha mudado entre os momentos de observação.</li>
+        <li><strong>Alertas que só um de vocês marcou</strong> — alertas marcados só por você podem indicar comportamentos que ela não percebeu como problemáticos. Alertas marcados só por ela são sinais importantes de que algo está acontecendo internamente que não está visível.</li>
+      </ul>
+    </div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">💬</span> Como usar a comparação na conversa</div>
+      <p>A tela de comparação pode ser um ponto de partida para uma conversa, mas não precisa virar confronto. Algumas sugestões:</p>
+      <ul>
+        <li>Abram juntos, sem expectativa de que os registros vão coincidir</li>
+        <li>Use frases como <em>"eu observei X, você registrou Y — o que estava acontecendo pra você nesse momento?"</em></li>
+        <li>Não use as divergências como argumento de que um dos dois está "errado"</li>
+        <li>Guarde os padrões para compartilhar com a psiquiatra — ela tem o contexto clínico para interpretar</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CAP 6 -->
+  <div class="manual-chapter">
+    <div class="chapter-label">Capítulo 06</div>
+    <div class="chapter-title">O relatório para a psiquiatra</div>
+
+    <div class="manual-card">
+      <div class="manual-card-title"><span class="mc-icon">📋</span> Como gerar e usar o relatório</div>
+      <ol class="step-list">
+        <li><span class="step-num">1</span><div>Na tela de comparação, clique em <strong>Relatório</strong> no canto superior direito</div></li>
+        <li><span class="step-num">2</span><div>O texto gerado inclui todos os registros salvos, com as perspectivas de cada um e as divergências sinalizadas</div></li>
+        <li><span class="step-num">3</span><div>Clique em <strong>Copiar</strong> e cole no e-mail, WhatsApp ou prontuário da psiquiatra</div></li>
+        <li><span class="step-num">4</span><div>Envie antes da consulta para que ela possa ler com antecedência — isso maximiza o tempo da sessão</div></li>
+      </ol>
+      <div class="highlight-box">O relatório destaca automaticamente os registros com risco <strong>Alto</strong> ou <strong>Crítico</strong> e lista as divergências entre perspectivas — os dados mais relevantes clinicamente ficam no topo.</div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="manual-chapter">
+    <div class="chapter-label">Perguntas frequentes</div>
+    <div class="chapter-title">Dúvidas comuns</div>
+    <div class="manual-card">
+      <div class="faq-item">
+        <div class="faq-q" onclick="togFaq(this)">E se ela não quiser preencher em algum dia? <span class="faq-arrow">▼</span></div>
+        <div class="faq-a">Tudo bem. Você pode preencher apenas o seu lado. Na comparação, o sistema vai indicar que o registro dela está faltando para aquela data. Não force o preenchimento — a resistência em si pode ser uma informação.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="togFaq(this)">O que fazer se o índice der Crítico mas ela parecer bem? <span class="faq-arrow">▼</span></div>
+        <div class="faq-a">O índice é calculado a partir dos dados inseridos. Se você marcou sinais de alerta graves mas ela parece estável externamente, vale ainda assim entrar em contato com a psiquiatra — especialmente se você percebeu algo que te preocupou o suficiente para marcar. Seu instinto como cuidador também é informação válida.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="togFaq(this)">Os dados somem se eu fechar o navegador? <span class="faq-arrow">▼</span></div>
+        <div class="faq-a">Não. Os dados ficam salvos no armazenamento local do navegador e persistem entre sessões. Eles só seriam perdidos se você limpar os dados do navegador manualmente, usar o modo anônimo/privativo, ou desinstalar o aplicativo. Por isso, gere o relatório periodicamente como backup.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="togFaq(this)">Posso usar em celulares diferentes para cada um? <span class="faq-arrow">▼</span></div>
+        <div class="faq-a">Sim, mas os dados ficarão separados em cada dispositivo. A tela de comparação só consegue cruzar registros que estão no mesmo dispositivo. Se cada um usar o próprio celular, você precisará transferir os dados manualmente — ou usar o relatório de cada lado para compartilhar com a psiquiatra separadamente.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="togFaq(this)">O formulário tem acesso à internet ou envia dados para algum lugar? <span class="faq-arrow">▼</span></div>
+        <div class="faq-a">Não. O formulário funciona inteiramente no seu dispositivo. Nenhum dado é enviado para servidores externos. A única conexão com a internet é para carregar as fontes tipográficas do Google Fonts no primeiro acesso.</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ══ FORM PAGE ══════════════════════════════════════════ -->
@@ -683,10 +1053,15 @@ let selectedMood = '';
 
 // ── NAV ───────────────────────────────────────────────────────
 function showPage(id) {
-  ['landing','formPage','comparePage'].forEach(p => document.getElementById(p).style.display = 'none');
+  ['landing','formPage','comparePage','manualPage'].forEach(p => document.getElementById(p).style.display = 'none');
   document.getElementById(id).style.display = id === 'landing' ? 'flex' : 'block';
 }
 function goHome() { showPage('landing'); }
+function openManual() { showPage('manualPage'); window.scrollTo(0,0); }
+function togFaq(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
 
 function openForm(who) {
   currentWho = who;
