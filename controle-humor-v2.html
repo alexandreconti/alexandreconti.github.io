@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diário de Humor — Dois Olhares</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;1,300;1,400&family=Instrument+Sans:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0e0c;
+  --surface: #1a1916;
+  --surface2: #232118;
+  --surface3: #2c2a24;
+  --border: #35322a;
+  --border2: #443f34;
+  --text: #e8e2d6;
+  --text-muted: #8a8070;
+  --text-dim: #5a5448;
+
+  --her: #c4956a;
+  --her-dim: rgba(196,149,106,0.12);
+  --her-glow: rgba(196,149,106,0.25);
+  --you: #6a9ec4;
+  --you-dim: rgba(106,158,196,0.12);
+  --you-glow: rgba(106,158,196,0.25);
+
+  --ok: #6aad7e;
+  --ok-dim: rgba(106,173,126,0.15);
+  --warn: #c49a4a;
+  --warn-dim: rgba(196,154,74,0.15);
+  --high: #c4724a;
+  --high-dim: rgba(196,114,74,0.15);
+  --crit: #c44a4a;
+  --crit-dim: rgba(196,74,74,0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+/* ── LANDING ── */
+#landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  background: radial-gradient(ellipse at 30% 40%, rgba(196,149,106,0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 60%, rgba(106,158,196,0.06) 0%, transparent 60%);
+}
+
+.landing-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 1.5rem;
+}
+
+.landing-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.2rem, 6vw, 3.5rem);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+.landing-title em { font-style: italic; }
+.landing-title .her-c { color: var(--her); }
+.landing-title .you-c { color: var(--you); }
+
+.landing-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  max-width: 420px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+}
+
+.role-cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.role-card {
+  flex: 1;
+  min-width: 180px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.75rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.role-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.role-card.her-card::before { background: radial-gradient(ellipse at 50% 0%, var(--her-glow), transparent 70%); }
+.role-card.you-card::before { background: radial-gradient(ellipse at 50% 0%, var(--you-glow), transparent 70%); }
+.role-card:hover::before { opacity: 1; }
+.role-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.role-card.her-card:hover { border-color: var(--her); }
+.role-card.you-card:hover { border-color: var(--you); }
+
+.role-icon { font-size: 1.75rem; margin-bottom: 0.75rem; display: block; }
+.role-name {
+  font-family: 'Fraunces', serif;
+  font-size: 1.2rem;
+  font-weight: 300;
+  margin-bottom: 0.3rem;
+}
+.her-card .role-name { color: var(--her); }
+.you-card .role-name { color: var(--you); }
+.role-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
+
+.compare-btn {
+  margin-top: 1.5rem;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text-muted);
+  border-radius: 8px;
+  padding: 0.65rem 1.25rem;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.02em;
+}
+.compare-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+/* ── FORM PAGE ── */
+#formPage { display: none; padding: 0 1rem 3rem; max-width: 700px; margin: 0 auto; }
+
+.form-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 0 1.75rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+.back-btn {
+  background: none; border: none; color: var(--text-muted); cursor: pointer;
+  font-size: 1rem; padding: 0.25rem; transition: color 0.12s;
+}
+.back-btn:hover { color: var(--text); }
+.form-who-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.badge-her { background: var(--her-dim); color: var(--her); border: 1px solid rgba(196,149,106,0.3); }
+.badge-you { background: var(--you-dim); color: var(--you); border: 1px solid rgba(106,158,196,0.3); }
+.form-topbar-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: 1rem; }
+
+/* SECTION */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+.sec-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem; }
+.sec-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  background: var(--surface3);
+  color: var(--text-muted);
+}
+.her-mode .sec-num { background: var(--her-dim); color: var(--her); }
+.you-mode .sec-num { background: var(--you-dim); color: var(--you); }
+.sec-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: 1rem; color: var(--text); }
+
+/* FIELD */
+.field { margin-bottom: 1.1rem; }
+.field:last-child { margin-bottom: 0; }
+label { display: block; font-size: 0.75rem; font-weight: 400; color: var(--text-muted); margin-bottom: 0.4rem; letter-spacing: 0.02em; }
+
+select, input[type="date"], textarea {
+  width: 100%;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.875rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+}
+select:focus, input:focus, textarea:focus { border-color: var(--border2); box-shadow: 0 0 0 3px rgba(255,255,255,0.04); }
+textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+.her-mode select:focus, .her-mode input:focus, .her-mode textarea:focus { border-color: var(--her); box-shadow: 0 0 0 3px var(--her-dim); }
+.you-mode select:focus, .you-mode input:focus, .you-mode textarea:focus { border-color: var(--you); box-shadow: 0 0 0 3px var(--you-dim); }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+/* MOOD GRID */
+.mood-grid { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
+.mood-opt {
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+  transition: all 0.13s;
+  text-align: center;
+  min-width: 66px;
+  user-select: none;
+}
+.mood-opt:hover { border-color: var(--border2); transform: translateY(-1px); }
+.mood-opt .em { font-size: 1.3rem; display: block; }
+.mood-opt .mn { font-size: 0.62rem; color: var(--text-muted); margin-top: 0.15rem; display: block; font-family: 'JetBrains Mono', monospace; }
+.her-mode .mood-opt.sel { border-color: var(--her); background: var(--her-dim); }
+.you-mode .mood-opt.sel { border-color: var(--you); background: var(--you-dim); }
+
+/* SCALE */
+.scale-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.55rem; flex-wrap: wrap; }
+.scale-lbl { font-size: 0.78rem; color: var(--text-muted); min-width: 130px; }
+.scale-btns { display: flex; gap: 0.25rem; }
+.sb {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.12s;
+  color: var(--text-dim);
+  display: flex; align-items: center; justify-content: center;
+}
+.sb:hover { border-color: var(--border2); color: var(--text-muted); }
+.sb.a1 { background: var(--ok-dim); border-color: var(--ok); color: var(--ok); }
+.sb.a2 { background: var(--ok-dim); border-color: var(--ok); color: var(--ok); }
+.sb.a3 { background: var(--warn-dim); border-color: var(--warn); color: var(--warn); }
+.sb.a4 { background: var(--high-dim); border-color: var(--high); color: var(--high); }
+.sb.a5 { background: var(--crit-dim); border-color: var(--crit); color: var(--crit); }
+
+/* CHIPS */
+.chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.25rem; }
+.chip {
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  border-radius: 20px;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.12s;
+  color: var(--text-muted);
+  user-select: none;
+}
+.chip:hover { border-color: var(--border2); color: var(--text); }
+.her-mode .chip.sel { background: var(--her-dim); border-color: var(--her); color: var(--her); }
+.you-mode .chip.sel { background: var(--you-dim); border-color: var(--you); color: var(--you); }
+.warn-chip.sel { background: var(--crit-dim) !important; border-color: var(--crit) !important; color: var(--crit) !important; }
+
+/* RISK */
+.risk-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.risk-lbl { flex: 1; }
+.risk-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.2rem; }
+.risk-val { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 300; }
+.risk-bar-wrap { flex: 2; }
+.risk-bg { height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+.risk-fill { height: 100%; border-radius: 3px; transition: width 0.4s, background 0.4s; width: 0%; }
+.risk-sub { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; }
+
+/* ALERT */
+.alert-box {
+  display: none;
+  background: var(--crit-dim);
+  border: 1px solid var(--crit);
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.alert-box.show { display: block; }
+.alert-box strong { color: var(--crit); display: block; margin-bottom: 0.2rem; }
+
+/* ACTIONS */
+.form-actions { display: flex; gap: 0.65rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.btn {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.825rem;
+  font-weight: 500;
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; gap: 0.35rem;
+}
+.btn-her { background: var(--her); color: #0f0e0c; }
+.btn-her:hover { filter: brightness(1.1); }
+.btn-you { background: var(--you); color: #0f0e0c; }
+.btn-you:hover { filter: brightness(1.1); }
+.btn-ghost { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+
+/* ── COMPARE PAGE ── */
+#comparePage { display: none; padding: 0 1rem 3rem; max-width: 820px; margin: 0 auto; }
+
+.compare-topbar {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 1.25rem 0 1.75rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+.compare-topbar h2 { font-family: 'Fraunces', serif; font-weight: 300; font-size: 1.1rem; flex: 1; }
+
+.date-selector { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.date-selector label { font-size: 0.78rem; color: var(--text-muted); }
+.date-selector select { width: auto; min-width: 160px; }
+
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.compare-col {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+.compare-col.her-col { border-top: 2px solid var(--her); }
+.compare-col.you-col { border-top: 2px solid var(--you); }
+.col-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+.col-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: 0.95rem; }
+.her-col .col-title { color: var(--her); }
+.you-col .col-title { color: var(--you); }
+
+.cmp-row {
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 0.2rem;
+}
+.cmp-row:last-child { border-bottom: none; }
+.cmp-key { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
+.cmp-val { font-size: 0.82rem; color: var(--text); }
+
+.diff-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  grid-column: 1 / -1;
+}
+.diff-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: 0.95rem; margin-bottom: 1rem; color: var(--text-muted); }
+.diff-item {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.diff-item:last-child { border-bottom: none; }
+.diff-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 0.35rem; }
+.diff-match { background: var(--ok); }
+.diff-diverge { background: var(--warn); }
+.diff-big { background: var(--crit); }
+
+.no-data {
+  text-align: center; padding: 2rem; color: var(--text-dim); font-size: 0.83rem;
+}
+
+.risk-compare-row {
+  display: flex; gap: 0.75rem; align-items: stretch; margin-top: 1rem;
+  grid-column: 1 / -1;
+}
+.risk-compare-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+.risk-compare-card.her-rc { border-left: 3px solid var(--her); }
+.risk-compare-card.you-rc { border-left: 3px solid var(--you); }
+.rc-label { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); margin-bottom: 0.4rem; }
+.rc-val { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 300; }
+.rc-bar-bg { height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; margin-top: 0.5rem; }
+.rc-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+
+/* HISTORY BAR */
+.history-bar {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.hb-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+.hb-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.hb-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 0.75rem;
+  transition: border-color 0.12s;
+  font-size: 0.8rem;
+}
+.hb-item:hover { border-color: var(--border2); }
+.hb-date { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--text-muted); min-width: 80px; }
+.hb-dots { display: flex; gap: 0.3rem; }
+.hb-dot { width: 8px; height: 8px; border-radius: 50%; }
+.hb-labels { color: var(--text-muted); font-size: 0.75rem; }
+
+/* EXPORT */
+.export-modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); z-index: 100;
+  align-items: center; justify-content: center; padding: 1rem;
+}
+.export-modal-overlay.open { display: flex; }
+.export-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.75rem;
+  max-width: 560px; width: 100%;
+  max-height: 80vh; overflow-y: auto;
+}
+.export-modal h3 { font-family: 'Fraunces', serif; font-weight: 300; margin-bottom: 0.4rem; }
+.export-modal p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.6; }
+.report-text {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 1rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+  line-height: 1.8; white-space: pre-wrap; word-break: break-word;
+  max-height: 300px; overflow-y: auto; margin-bottom: 1rem;
+  color: var(--text-muted);
+}
+.modal-actions { display: flex; gap: 0.5rem; }
+
+@media (max-width: 520px) {
+  .compare-grid { grid-template-columns: 1fr; }
+  .risk-compare-row { flex-direction: column; }
+  .two-col { grid-template-columns: 1fr; }
+  .scale-row { flex-direction: column; align-items: flex-start; }
+  .scale-lbl { min-width: unset; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LANDING ══════════════════════════════════════════ -->
+<div id="landing">
+  <div class="landing-eyebrow">Diário de humor · dois olhares</div>
+  <h1 class="landing-title">
+    Como você está<br>
+    <em><span class="her-c">sentindo</span> e <span class="you-c">vendo</span>?</em>
+  </h1>
+  <p class="landing-sub">Cada um registra sua perspectiva separadamente. Depois, comparam juntos — as diferenças também são informação.</p>
+  <div class="role-cards">
+    <div class="role-card her-card" onclick="openForm('her')">
+      <span class="role-icon">🌸</span>
+      <div class="role-name">Ela</div>
+      <div class="role-desc">Como me sinto hoje — minha perspectiva interna</div>
+    </div>
+    <div class="role-card you-card" onclick="openForm('you')">
+      <span class="role-icon">👁</span>
+      <div class="role-name">Você</div>
+      <div class="role-desc">O que observei hoje — perspectiva externa</div>
+    </div>
+  </div>
+  <button class="compare-btn" onclick="openCompare()">⇄ Comparar registros</button>
+</div>
+
+<!-- ══ FORM PAGE ══════════════════════════════════════════ -->
+<div id="formPage">
+  <div class="form-topbar">
+    <button class="back-btn" onclick="goHome()">← voltar</button>
+    <span class="form-who-badge" id="whoBadge"></span>
+    <span class="form-topbar-title" id="formTitle"></span>
+  </div>
+
+  <div id="alertBox" class="alert-box">
+    <strong id="alertTitle"></strong>
+    <span id="alertBody"></span>
+  </div>
+
+  <!-- S1 -->
+  <div class="section">
+    <div class="sec-header"><span class="sec-num">01</span><span class="sec-title">Data e contexto</span></div>
+    <div class="two-col">
+      <div class="field"><label>Data</label><input type="date" id="fDate"></div>
+      <div class="field"><label>Período</label>
+        <select id="fPeriod">
+          <option value="">— selecione —</option>
+          <option>Manhã</option><option>Tarde</option><option>Noite</option><option>Dia todo</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Sono na noite anterior</label>
+      <select id="fSleep">
+        <option value="">— selecione —</option>
+        <option>Menos de 3h</option><option>3–5h</option><option>5–7h</option>
+        <option>7–9h (adequado)</option><option>Mais de 9h</option><option>Não dormiu</option><option>Não sei</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="section">
+    <div class="sec-header"><span class="sec-num">02</span><span class="sec-title" id="s2title">Estado de humor</span></div>
+    <div class="field">
+      <label id="moodLabel">Humor predominante hoje</label>
+      <div class="mood-grid" id="moodGrid">
+        <div class="mood-opt" data-mood="Estável" onclick="selMood(this)"><span class="em">😌</span><span class="mn">Estável</span></div>
+        <div class="mood-opt" data-mood="Triste" onclick="selMood(this)"><span class="em">😔</span><span class="mn">Triste</span></div>
+        <div class="mood-opt" data-mood="Irritável" onclick="selMood(this)"><span class="em">😤</span><span class="mn">Irritável</span></div>
+        <div class="mood-opt" data-mood="Eufórico" onclick="selMood(this)"><span class="em">🤩</span><span class="mn">Eufórico</span></div>
+        <div class="mood-opt" data-mood="Ansioso" onclick="selMood(this)"><span class="em">😰</span><span class="mn">Ansioso</span></div>
+        <div class="mood-opt" data-mood="Apático" onclick="selMood(this)"><span class="em">😶</span><span class="mn">Apático</span></div>
+        <div class="mood-opt" data-mood="Misto" onclick="selMood(this)"><span class="em">🌀</span><span class="mn">Misto</span></div>
+        <div class="mood-opt" data-mood="Grandioso" onclick="selMood(this)"><span class="em">👑</span><span class="mn">Grandioso</span></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Intensidade (1 = muito leve · 5 = muito intenso)</label>
+      <div class="scale-row"><span class="scale-lbl">Intensidade geral</span><div class="scale-btns" id="sc-intensity"></div></div>
+      <div class="scale-row"><span class="scale-lbl">Variação no dia</span><div class="scale-btns" id="sc-variation"></div></div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="section">
+    <div class="sec-header"><span class="sec-num">03</span><span class="sec-title" id="s3title">Comportamento e energia</span></div>
+    <div class="field">
+      <label>Nível de energia</label>
+      <div class="scale-row"><span class="scale-lbl">Energia percebida</span><div class="scale-btns" id="sc-energy"></div></div>
+    </div>
+    <div class="field">
+      <label id="behavLabel">Sinais observados</label>
+      <div class="chips" id="behavChips">
+        <div class="chip" onclick="togChip(this)">Fala acelerada</div>
+        <div class="chip" onclick="togChip(this)">Pensamento acelerado</div>
+        <div class="chip" onclick="togChip(this)">Impulsividade</div>
+        <div class="chip" onclick="togChip(this)">Gastos excessivos</div>
+        <div class="chip" onclick="togChip(this)">Desinibição sexual</div>
+        <div class="chip" onclick="togChip(this)">Grandiosidade</div>
+        <div class="chip" onclick="togChip(this)">Irritabilidade intensa</div>
+        <div class="chip" onclick="togChip(this)">Choro frequente</div>
+        <div class="chip" onclick="togChip(this)">Isolamento</div>
+        <div class="chip" onclick="togChip(this)">Sem apetite</div>
+        <div class="chip" onclick="togChip(this)">Hiperfoco</div>
+        <div class="chip" onclick="togChip(this)">Paranoia</div>
+        <div class="chip" onclick="togChip(this)">Agitação motora</div>
+        <div class="chip" onclick="togChip(this)">Prostração</div>
+        <div class="chip" onclick="togChip(this)">Pensamento desorganizado</div>
+      </div>
+    </div>
+    <div class="field"><label>Medicação tomada?</label>
+      <select id="fMed">
+        <option value="">— selecione —</option>
+        <option>Sim, todas as doses</option><option>Parcialmente</option>
+        <option>Não tomei</option><option>Não sei</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="section">
+    <div class="sec-header"><span class="sec-num">04</span><span class="sec-title">Sinais de alerta</span></div>
+    <div class="field">
+      <label>Marque se presente</label>
+      <div class="chips" id="warnChips">
+        <div class="chip warn-chip" onclick="togChip(this)">Sem dormir 24h+</div>
+        <div class="chip warn-chip" onclick="togChip(this)">Grandiosidade extrema</div>
+        <div class="chip warn-chip" onclick="togChip(this)">Comportamento de risco</div>
+        <div class="chip warn-chip" onclick="togChip(this)">Agressividade</div>
+        <div class="chip warn-chip" onclick="togChip(this)">Pensamentos de autolesão</div>
+        <div class="chip warn-chip" onclick="togChip(this)">Recusa da medicação</div>
+        <div class="chip warn-chip" onclick="togChip(this)">Contato com realidade prejudicado</div>
+        <div class="chip warn-chip" onclick="togChip(this)">Fuga de ideias intensa</div>
+      </div>
+    </div>
+    <div class="risk-box">
+      <div class="risk-lbl">
+        <div class="risk-tag">Índice de risco</div>
+        <div class="risk-val" id="riskVal">—</div>
+        <div class="risk-sub" id="riskSub">Preencha para calcular</div>
+      </div>
+      <div class="risk-bar-wrap">
+        <div class="risk-bg"><div class="risk-fill" id="riskFill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="section">
+    <div class="sec-header"><span class="sec-num">05</span><span class="sec-title" id="s5title">Observações livres</span></div>
+    <div class="field">
+      <label id="obsLabel1">O que mais chamou atenção hoje?</label>
+      <textarea id="fObs" placeholder="Descreva livremente..."></textarea>
+    </div>
+    <div class="field">
+      <label id="obsLabel2">Contexto externo relevante</label>
+      <textarea id="fCtx" placeholder="Eventos, estresse, conflitos..."></textarea>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn" id="saveBtnEl" onclick="saveEntry()">💾 Salvar registro</button>
+    <button class="btn btn-ghost" onclick="clearForm()">↺ Limpar</button>
+  </div>
+</div>
+
+<!-- ══ COMPARE PAGE ══════════════════════════════════════ -->
+<div id="comparePage">
+  <div class="compare-topbar">
+    <button class="back-btn" onclick="goHome()">← voltar</button>
+    <h2>Confronto de perspectivas</h2>
+    <button class="btn btn-ghost" style="font-size:0.75rem;padding:0.4rem 0.75rem;" onclick="openExport()">📋 Relatório</button>
+  </div>
+
+  <div class="date-selector">
+    <label>Ver registros de:</label>
+    <select id="dateSelect" onchange="renderCompare()"><option value="">— escolha a data —</option></select>
+  </div>
+
+  <div id="compareContent">
+    <div class="no-data">Selecione uma data para ver a comparação.</div>
+  </div>
+
+  <div class="history-bar">
+    <div class="hb-title">Histórico de registros</div>
+    <div class="hb-list" id="hbList"></div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="export-modal-overlay" id="exportModal">
+  <div class="export-modal">
+    <h3>Relatório para psiquiatra</h3>
+    <p>Inclui todos os pares de registros salvos com comparação de perspectivas.</p>
+    <div class="report-text" id="reportText"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="copyReport()">📋 Copiar</button>
+      <button class="btn btn-ghost" onclick="closeExport()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────
+let currentWho = 'her'; // 'her' | 'you'
+const scaleVals = { intensity: 0, variation: 0, energy: 0 };
+let selectedMood = '';
+
+// ── NAV ───────────────────────────────────────────────────────
+function showPage(id) {
+  ['landing','formPage','comparePage'].forEach(p => document.getElementById(p).style.display = 'none');
+  document.getElementById(id).style.display = id === 'landing' ? 'flex' : 'block';
+}
+function goHome() { showPage('landing'); }
+
+function openForm(who) {
+  currentWho = who;
+  clearForm();
+  applyWhoStyle();
+  showPage('formPage');
+  window.scrollTo(0,0);
+}
+
+function applyWhoStyle() {
+  const fp = document.getElementById('formPage');
+  fp.className = currentWho === 'her' ? 'her-mode' : 'you-mode';
+
+  document.getElementById('whoBadge').textContent = currentWho === 'her' ? 'Ela' : 'Você';
+  document.getElementById('whoBadge').className = 'form-who-badge ' + (currentWho === 'her' ? 'badge-her' : 'badge-you');
+  document.getElementById('formTitle').textContent = currentWho === 'her' ? 'Como me sinto hoje' : 'O que observei hoje';
+
+  const savBtn = document.getElementById('saveBtnEl');
+  savBtn.className = 'btn ' + (currentWho === 'her' ? 'btn-her' : 'btn-you');
+  savBtn.textContent = '💾 Salvar registro';
+
+  if (currentWho === 'her') {
+    document.getElementById('moodLabel').textContent = 'Como me sinto predominantemente hoje';
+    document.getElementById('behavLabel').textContent = 'O que estou experienciando';
+    document.getElementById('obsLabel1').textContent = 'O que mais me marcou hoje?';
+    document.getElementById('obsLabel2').textContent = 'O que pode ter influenciado meu humor?';
+    document.getElementById('fMed').options[2].text = 'Não tomei';
+  } else {
+    document.getElementById('moodLabel').textContent = 'Humor que observei predominar nela hoje';
+    document.getElementById('behavLabel').textContent = 'Comportamentos que observei nela';
+    document.getElementById('obsLabel1').textContent = 'O que mais chamou minha atenção hoje?';
+    document.getElementById('obsLabel2').textContent = 'Contexto externo relevante';
+    document.getElementById('fMed').options[2].text = 'Não tomou';
+  }
+}
+
+function openCompare() {
+  populateDateSelect();
+  renderHistoryBar();
+  showPage('comparePage');
+  window.scrollTo(0,0);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
+  buildScales();
+  showPage('landing');
+  ['select','input','textarea'].forEach(tag => {
+    document.querySelectorAll('#formPage ' + tag).forEach(el => {
+      el.addEventListener('change', updateRisk);
+      el.addEventListener('input', updateRisk);
+    });
+  });
+});
+
+// ── SCALES ────────────────────────────────────────────────────
+function buildScales() {
+  [['sc-intensity','intensity'],['sc-variation','variation'],['sc-energy','energy']].forEach(([id,key]) => {
+    const c = document.getElementById(id);
+    for (let i = 1; i <= 5; i++) {
+      const b = document.createElement('button');
+      b.className = 'sb';
+      b.textContent = i;
+      b.onclick = () => {
+        scaleVals[key] = i;
+        c.querySelectorAll('.sb').forEach(x => x.className = 'sb');
+        b.classList.add('a' + i);
+        updateRisk();
+      };
+      c.appendChild(b);
+    }
+  });
+}
+
+function selMood(el) {
+  document.querySelectorAll('.mood-opt').forEach(m => m.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedMood = el.dataset.mood;
+  updateRisk();
+}
+
+function togChip(el) { el.classList.toggle('sel'); updateRisk(); }
+
+function getChips(id) { return [...document.querySelectorAll('#'+id+' .chip.sel')].map(c => c.textContent.trim()); }
+
+// ── RISK ──────────────────────────────────────────────────────
+function calcRisk() {
+  let s = 0;
+  s += getChips('warnChips').length * 18;
+  s += getChips('behavChips').length * 5;
+  const sleep = document.getElementById('fSleep').value;
+  if (sleep === 'Menos de 3h' || sleep === 'Não dormiu') s += 20;
+  else if (sleep === '3–5h') s += 10;
+  const med = document.getElementById('fMed').value;
+  if (med.includes('Não')) s += 20;
+  else if (med === 'Parcialmente') s += 8;
+  if (['Eufórico','Grandioso','Misto'].includes(selectedMood)) s += 14;
+  else if (['Irritável','Ansioso'].includes(selectedMood)) s += 7;
+  if (scaleVals.intensity >= 4) s += 10;
+  if (scaleVals.energy >= 4) s += 10;
+  return Math.min(s, 100);
+}
+
+function riskLabel(score) {
+  if (!score) return { txt: '—', sub: 'Preencha para calcular', color: 'var(--text-dim)' };
+  if (score < 25) return { txt: 'Baixo', sub: 'Sem sinais preocupantes.', color: 'var(--ok)' };
+  if (score < 50) return { txt: 'Moderado', sub: 'Atenção aumentada recomendada.', color: 'var(--warn)' };
+  if (score < 75) return { txt: 'Alto', sub: 'Considere contato com a psiquiatra.', color: 'var(--high)' };
+  return { txt: 'Crítico', sub: 'Entre em contato hoje.', color: 'var(--crit)' };
+}
+
+function updateRisk() {
+  const score = calcRisk();
+  const r = riskLabel(score);
+  document.getElementById('riskVal').textContent = r.txt;
+  document.getElementById('riskVal').style.color = r.color;
+  document.getElementById('riskSub').textContent = r.sub;
+  const fill = document.getElementById('riskFill');
+  fill.style.width = (score || 0) + '%';
+  fill.style.background = r.color;
+
+  const box = document.getElementById('alertBox');
+  if (score >= 75) {
+    document.getElementById('alertTitle').textContent = score >= 75 && score < 90
+      ? 'Indicadores de risco alto identificados'
+      : '⚠️ Sinais críticos — contato imediato recomendado';
+    document.getElementById('alertBody').textContent = score >= 90
+      ? 'Múltiplos sinais de alerta graves. Contate a psiquiatra ou busque atendimento de urgência.'
+      : 'Os sinais desta sessão sugerem possível mudança de estado. Recomenda-se contato com a psiquiatra em 24–48h.';
+    box.classList.add('show');
+  } else {
+    box.classList.remove('show');
+  }
+}
+
+// ── SAVE ──────────────────────────────────────────────────────
+function saveEntry() {
+  const date = document.getElementById('fDate').value;
+  if (!date) { alert('Informe a data.'); return; }
+  const entry = {
+    id: Date.now(),
+    who: currentWho,
+    date,
+    period: document.getElementById('fPeriod').value,
+    sleep: document.getElementById('fSleep').value,
+    mood: selectedMood,
+    intensity: scaleVals.intensity,
+    variation: scaleVals.variation,
+    energy: scaleVals.energy,
+    behaviors: getChips('behavChips'),
+    warnings: getChips('warnChips'),
+    medication: document.getElementById('fMed').value,
+    obs: document.getElementById('fObs').value,
+    ctx: document.getElementById('fCtx').value,
+    risk: calcRisk(),
+  };
+  const all = loadAll();
+  all.unshift(entry);
+  localStorage.setItem('humor2_entries', JSON.stringify(all));
+  goHome();
+}
+
+function loadAll() {
+  try { return JSON.parse(localStorage.getItem('humor2_entries') || '[]'); } catch { return []; }
+}
+
+function clearForm() {
+  document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
+  ['fPeriod','fSleep','fMed'].forEach(id => document.getElementById(id).value = '');
+  ['fObs','fCtx'].forEach(id => document.getElementById(id).value = '');
+  document.querySelectorAll('.chip.sel').forEach(c => c.classList.remove('sel'));
+  document.querySelectorAll('.mood-opt.sel').forEach(m => m.classList.remove('sel'));
+  document.querySelectorAll('.sb').forEach(b => b.className = 'sb');
+  Object.keys(scaleVals).forEach(k => scaleVals[k] = 0);
+  selectedMood = '';
+  document.getElementById('alertBox').classList.remove('show');
+  updateRisk();
+}
+
+// ── COMPARE ───────────────────────────────────────────────────
+function allDates() {
+  const all = loadAll();
+  const dates = [...new Set(all.map(e => e.date))].sort().reverse();
+  return dates;
+}
+
+function populateDateSelect() {
+  const sel = document.getElementById('dateSelect');
+  const dates = allDates();
+  sel.innerHTML = '<option value="">— escolha a data —</option>';
+  dates.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = formatDate(d);
+    sel.appendChild(opt);
+  });
+}
+
+function renderCompare() {
+  const date = document.getElementById('dateSelect').value;
+  const container = document.getElementById('compareContent');
+  if (!date) { container.innerHTML = '<div class="no-data">Selecione uma data.</div>'; return; }
+
+  const all = loadAll();
+  const her = all.find(e => e.date === date && e.who === 'her');
+  const you = all.find(e => e.date === date && e.who === 'you');
+
+  if (!her && !you) { container.innerHTML = '<div class="no-data">Nenhum registro para esta data.</div>'; return; }
+  if (!her || !you) {
+    const missing = !her ? 'Ela' : 'Você';
+    container.innerHTML = `<div class="no-data">Falta o registro de: <strong>${missing}</strong>. Peça que preencha para poder comparar.</div>`;
+    return;
+  }
+
+  // Risk cards
+  const rH = riskLabel(her.risk);
+  const rY = riskLabel(you.risk);
+
+  // Diffs
+  const diffs = buildDiffs(her, you);
+
+  container.innerHTML = `
+    <div class="compare-grid">
+      <div class="compare-col her-col">
+        <div class="col-header"><span class="form-who-badge badge-her">Ela</span><span class="col-title">Como se sentiu</span></div>
+        ${colRows(her, 'her')}
+      </div>
+      <div class="compare-col you-col">
+        <div class="col-header"><span class="form-who-badge badge-you">Você</span><span class="col-title">O que observou</span></div>
+        ${colRows(you, 'you')}
+      </div>
+      <div style="grid-column:1/-1; display:flex; gap:0.75rem;">
+        <div class="risk-compare-card her-rc" style="flex:1">
+          <div class="rc-label">Risco · Ela</div>
+          <div class="rc-val" style="color:${rH.color}">${rH.txt}</div>
+          <div class="rc-bar-bg"><div class="rc-bar-fill" style="width:${her.risk}%;background:${rH.color}"></div></div>
+        </div>
+        <div class="risk-compare-card you-rc" style="flex:1">
+          <div class="rc-label">Risco · Você observou</div>
+          <div class="rc-val" style="color:${rY.color}">${rY.txt}</div>
+          <div class="rc-bar-bg"><div class="rc-bar-fill" style="width:${you.risk}%;background:${rY.color}"></div></div>
+        </div>
+      </div>
+      <div class="diff-section">
+        <div class="diff-title">Análise das divergências</div>
+        ${diffs.map(d => `
+          <div class="diff-item">
+            <div class="diff-dot ${d.cls}"></div>
+            <div>${d.text}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function colRows(e, who) {
+  return `
+    <div class="cmp-row"><div class="cmp-key">Humor</div><div class="cmp-val">${e.mood || '—'}</div></div>
+    <div class="cmp-row"><div class="cmp-key">Sono</div><div class="cmp-val">${e.sleep || '—'}</div></div>
+    <div class="cmp-row"><div class="cmp-key">Energia</div><div class="cmp-val">${e.energy ? e.energy + '/5' : '—'}</div></div>
+    <div class="cmp-row"><div class="cmp-key">Intensidade</div><div class="cmp-val">${e.intensity ? e.intensity + '/5' : '—'}</div></div>
+    <div class="cmp-row"><div class="cmp-key">Medicação</div><div class="cmp-val">${e.medication || '—'}</div></div>
+    <div class="cmp-row"><div class="cmp-key">Sinais</div><div class="cmp-val">${e.behaviors.length ? e.behaviors.join(', ') : 'nenhum'}</div></div>
+    ${e.warnings.length ? `<div class="cmp-row"><div class="cmp-key" style="color:var(--crit)">⚠ Alertas</div><div class="cmp-val" style="color:var(--crit)">${e.warnings.join(', ')}</div></div>` : ''}
+    ${e.obs ? `<div class="cmp-row"><div class="cmp-key">Observações</div><div class="cmp-val">${e.obs}</div></div>` : ''}`;
+}
+
+function buildDiffs(her, you) {
+  const items = [];
+
+  // Mood
+  if (her.mood && you.mood) {
+    if (her.mood === you.mood) {
+      items.push({ cls: 'diff-match', text: `<strong>Humor:</strong> Ambos identificaram "${her.mood}". As perspectivas coincidem.` });
+    } else {
+      items.push({ cls: 'diff-diverge', text: `<strong>Humor:</strong> Ela se sentiu "${her.mood}", você observou "${you.mood}". Divergência na leitura do estado.` });
+    }
+  }
+
+  // Intensity
+  if (her.intensity && you.intensity) {
+    const diff = Math.abs(her.intensity - you.intensity);
+    if (diff === 0) {
+      items.push({ cls: 'diff-match', text: `<strong>Intensidade:</strong> Mesma percepção (${her.intensity}/5).` });
+    } else if (diff <= 1) {
+      items.push({ cls: 'diff-diverge', text: `<strong>Intensidade:</strong> Ela avaliou ${her.intensity}/5, você avaliou ${you.intensity}/5. Pequena diferença — pode indicar dissimulação leve ou diferença de perspectiva.` });
+    } else {
+      items.push({ cls: 'diff-big', text: `<strong>Intensidade:</strong> Divergência significativa — ela avaliou ${her.intensity}/5 e você ${you.intensity}/5. Diferença de ${diff} pontos merece atenção clínica.` });
+    }
+  }
+
+  // Energy
+  if (her.energy && you.energy) {
+    const diff = Math.abs(her.energy - you.energy);
+    if (diff >= 2) {
+      items.push({ cls: 'diff-big', text: `<strong>Energia:</strong> Ela percebeu ${her.energy}/5, você observou ${you.energy}/5. Grande discrepância — comum em episódios com insight reduzido.` });
+    } else if (diff === 1) {
+      items.push({ cls: 'diff-diverge', text: `<strong>Energia:</strong> Pequena diferença (${her.energy} vs ${you.energy}).` });
+    }
+  }
+
+  // Warnings
+  const herW = new Set(her.warnings);
+  const youW = new Set(you.warnings);
+  const onlyHer = [...herW].filter(x => !youW.has(x));
+  const onlyYou = [...youW].filter(x => !herW.has(x));
+  const bothW = [...herW].filter(x => youW.has(x));
+
+  if (bothW.length) {
+    items.push({ cls: 'diff-big', text: `<strong>Alertas em comum:</strong> ${bothW.join(', ')}. Ambos identificaram estes sinais — prioridade para a psiquiatra.` });
+  }
+  if (onlyHer.length) {
+    items.push({ cls: 'diff-diverge', text: `<strong>Só ela relatou:</strong> ${onlyHer.join(', ')}. Ela percebeu internamente algo que não ficou visível externamente.` });
+  }
+  if (onlyYou.length) {
+    items.push({ cls: 'diff-diverge', text: `<strong>Só você observou:</strong> ${onlyYou.join(', ')}. Ela pode não ter percebido ou não quis registrar.` });
+  }
+
+  // Medication
+  if (her.medication && you.medication && her.medication !== you.medication) {
+    items.push({ cls: 'diff-diverge', text: `<strong>Medicação:</strong> Ela registrou "${her.medication}", você registrou "${you.medication}". Vale alinhar.` });
+  }
+
+  if (items.length === 0) {
+    items.push({ cls: 'diff-match', text: 'Não há dados suficientes para análise de divergências.' });
+  }
+
+  return items;
+}
+
+// ── HISTORY BAR ───────────────────────────────────────────────
+function renderHistoryBar() {
+  const all = loadAll();
+  const dates = allDates();
+  const container = document.getElementById('hbList');
+  if (!dates.length) { container.innerHTML = '<div class="no-data">Nenhum registro ainda.</div>'; return; }
+
+  container.innerHTML = dates.map(d => {
+    const her = all.find(e => e.date === d && e.who === 'her');
+    const you = all.find(e => e.date === d && e.who === 'you');
+    const rH = her ? riskLabel(her.risk) : null;
+    const rY = you ? riskLabel(you.risk) : null;
+    return `<div class="hb-item" onclick="selectDate('${d}')">
+      <span class="hb-date">${formatDate(d)}</span>
+      <span class="hb-dots">
+        <span class="hb-dot" style="background:${rH ? rH.color : 'var(--border)'}" title="Ela: ${rH ? rH.txt : 'sem registro'}"></span>
+        <span class="hb-dot" style="background:${rY ? rY.color : 'var(--border)'}" title="Você: ${rY ? rY.txt : 'sem registro'}"></span>
+      </span>
+      <span class="hb-labels">${her ? '🌸 ' + (her.mood || '—') : ''} ${you ? '· 👁 ' + (you.mood || '—') : ''}</span>
+    </div>`;
+  }).join('');
+}
+
+function selectDate(d) {
+  document.getElementById('dateSelect').value = d;
+  renderCompare();
+  window.scrollTo(0,0);
+}
+
+function formatDate(str) {
+  if (!str) return '';
+  const [y,m,d] = str.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+// ── EXPORT ────────────────────────────────────────────────────
+function openExport() {
+  const all = loadAll();
+  const dates = allDates();
+  const lines = [];
+  lines.push('RELATÓRIO DE MONITORAMENTO DE HUMOR — DOIS OLHARES');
+  lines.push('Gerado em: ' + new Date().toLocaleString('pt-BR'));
+  lines.push('Registros: ' + all.length + ' · Datas: ' + dates.length);
+  lines.push('');
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+  dates.forEach(d => {
+    const her = all.find(e => e.date === d && e.who === 'her');
+    const you = all.find(e => e.date === d && e.who === 'you');
+    lines.push('');
+    lines.push(`DATA: ${formatDate(d)}`);
+    if (her) {
+      lines.push(`  [ELA — autopercepção] Risco: ${riskLabel(her.risk).txt}`);
+      lines.push(`    Humor: ${her.mood || '—'} · Sono: ${her.sleep || '—'} · Energia: ${her.energy}/5`);
+      lines.push(`    Medicação: ${her.medication || '—'}`);
+      if (her.behaviors.length) lines.push(`    Sinais: ${her.behaviors.join(', ')}`);
+      if (her.warnings.length) lines.push(`    ⚠ ALERTAS: ${her.warnings.join(', ')}`);
+      if (her.obs) lines.push(`    Relato: ${her.obs}`);
+    }
+    if (you) {
+      lines.push(`  [CUIDADOR — observação externa] Risco: ${riskLabel(you.risk).txt}`);
+      lines.push(`    Humor observado: ${you.mood || '—'} · Sono: ${you.sleep || '—'} · Energia: ${you.energy}/5`);
+      lines.push(`    Medicação: ${you.medication || '—'}`);
+      if (you.behaviors.length) lines.push(`    Comportamentos: ${you.behaviors.join(', ')}`);
+      if (you.warnings.length) lines.push(`    ⚠ ALERTAS: ${you.warnings.join(', ')}`);
+      if (you.obs) lines.push(`    Observação: ${you.obs}`);
+    }
+    if (her && you) {
+      const moodDiv = her.mood !== you.mood ? `DIVERGÊNCIA DE HUMOR (ela: ${her.mood} / observado: ${you.mood})` : 'humor alinhado';
+      const intDiv = her.intensity && you.intensity ? Math.abs(her.intensity - you.intensity) : 0;
+      lines.push(`  Divergências: ${moodDiv}${intDiv >= 2 ? ` · DIFERENÇA DE INTENSIDADE: ${intDiv} pontos` : ''}`);
+    }
+  });
+
+  lines.push('');
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('Não substitui avaliação clínica profissional.');
+
+  document.getElementById('reportText').textContent = lines.join('\n');
+  document.getElementById('exportModal').classList.add('open');
+}
+function closeExport() { document.getElementById('exportModal').classList.remove('open'); }
+function copyReport() {
+  navigator.clipboard.writeText(document.getElementById('reportText').textContent)
+    .then(() => alert('Copiado! Cole no e-mail ou WhatsApp da psiquiatra.'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diário de Humor — Monitoramento Clínico</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2ee;
+    --surface: #ffffff;
+    --surface2: #f0ece6;
+    --border: #d8d0c6;
+    --text: #1a1612;
+    --text-muted: #7a6f64;
+    --accent: #2d5a4e;
+    --accent-light: #e8f0ee;
+    --warn: #c4622d;
+    --warn-light: #fdf0ea;
+    --alert: #8b1a1a;
+    --alert-light: #fdf0f0;
+    --ok: #2d5a4e;
+    --ok-light: #e8f0ee;
+    --yellow: #b8860b;
+    --yellow-light: #fdf8e8;
+    --ink: #1a1612;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  header {
+    padding: 2rem 0 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    line-height: 1.6;
+  }
+
+  /* ALERT BANNER */
+  .alert-banner {
+    display: none;
+    background: var(--alert-light);
+    border: 1.5px solid var(--alert);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .alert-banner.visible { display: flex; }
+  .alert-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .alert-text { font-size: 0.875rem; line-height: 1.6; }
+  .alert-text strong { color: var(--alert); display: block; margin-bottom: 0.25rem; font-size: 0.95rem; }
+
+  /* SECTIONS */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    background: var(--accent);
+    color: white;
+    border-radius: 4px;
+    padding: 0.15rem 0.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+  }
+
+  /* FIELD */
+  .field { margin-bottom: 1.1rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  label .req { color: var(--warn); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45,90,78,0.1);
+  }
+
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+  /* SCALE */
+  .scale-wrap { margin-top: 0.25rem; }
+  .scale-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+  }
+  .scale-label {
+    font-size: 0.8rem;
+    color: var(--text);
+    min-width: 140px;
+    font-weight: 400;
+  }
+  .scale-buttons { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+  .scale-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.12s;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+  }
+  .scale-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .scale-btn.active-low  { background: #e8f0ee; border-color: var(--ok); color: var(--ok); }
+  .scale-btn.active-mid  { background: #fdf8e8; border-color: var(--yellow); color: var(--yellow); }
+  .scale-btn.active-high { background: #fdf0ea; border-color: var(--warn); color: var(--warn); }
+  .scale-btn.active-crit { background: #fdf0f0; border-color: var(--alert); color: var(--alert); }
+
+  /* TOGGLE CHIPS */
+  .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
+  .chip {
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+    border-radius: 20px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.12s;
+    color: var(--text-muted);
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip.selected { background: var(--accent-light); border-color: var(--accent); color: var(--accent); font-weight: 500; }
+  .chip.warn-chip.selected { background: var(--warn-light); border-color: var(--warn); color: var(--warn); }
+
+  /* MOOD EMOJI SELECTOR */
+  .mood-grid { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.25rem; }
+  .mood-option {
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-width: 70px;
+  }
+  .mood-option:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .mood-option.selected { border-color: var(--accent); background: var(--accent-light); }
+  .mood-option .emoji { font-size: 1.4rem; display: block; }
+  .mood-option .mood-name { font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem; display: block; font-family: 'DM Mono', monospace; }
+
+  /* RISK METER */
+  .risk-display {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .risk-label-col { flex: 1; }
+  .risk-title { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.25rem; }
+  .risk-value { font-family: 'DM Serif Display', serif; font-size: 1.5rem; }
+  .risk-bar-wrap { flex: 2; }
+  .risk-bar-bg { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .risk-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease, background 0.4s ease; width: 0%; background: var(--ok); }
+  .risk-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; }
+
+  /* ACTIONS */
+  .actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.65rem 1.25rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: #234840; }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-danger {
+    background: var(--alert-light);
+    color: var(--alert);
+    border: 1px solid #f0b0b0;
+  }
+  .btn-danger:hover { background: #f8dada; }
+
+  /* HISTORY */
+  .history-wrap { margin-top: 2rem; }
+  .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .history-title { font-family: 'DM Serif Display', serif; font-size: 1.1rem; font-weight: 400; }
+  .entry-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.12s;
+  }
+  .entry-card:hover { border-color: var(--accent); }
+  .entry-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem; }
+  .entry-date { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-muted); }
+  .entry-risk-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .badge-low { background: var(--ok-light); color: var(--ok); border: 1px solid #b0d4cc; }
+  .badge-moderate { background: var(--yellow-light); color: var(--yellow); border: 1px solid #e0cc80; }
+  .badge-high { background: var(--warn-light); color: var(--warn); border: 1px solid #f0b890; }
+  .badge-critical { background: var(--alert-light); color: var(--alert); border: 1px solid #f0a0a0; }
+  .entry-preview { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+
+  .empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  /* EXPORT MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 1.75rem;
+    max-width: 540px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+  }
+  .modal h2 { font-family: 'DM Serif Display', serif; font-weight: 400; margin-bottom: 0.5rem; }
+  .modal p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.6; }
+  .report-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 280px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+  }
+  .modal-actions { display: flex; gap: 0.5rem; }
+
+  @media (max-width: 500px) {
+    .two-col { grid-template-columns: 1fr; }
+    .scale-row { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+    .scale-label { min-width: unset; }
+    .mood-grid { gap: 0.35rem; }
+    .mood-option { min-width: 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header>
+    <div class="header-label">Monitoramento clínico · uso do cuidador</div>
+    <h1>Diário de <em>Humor</em></h1>
+    <p class="subtitle">Registre observações diárias para identificar padrões e alertar a equipe de saúde em caso de mudanças significativas.</p>
+  </header>
+
+  <!-- ALERT BANNER -->
+  <div class="alert-banner" id="alertBanner">
+    <div class="alert-icon">⚠️</div>
+    <div class="alert-text">
+      <strong id="alertTitle">Atenção: sinais de alerta identificados</strong>
+      <span id="alertBody">Este registro apresenta indicadores que merecem atenção da psiquiatra. Considere entrar em contato com a equipe de saúde.</span>
+    </div>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <span class="section-title">Data e contexto</span>
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label>Data <span class="req">*</span></label>
+        <input type="date" id="fieldDate">
+      </div>
+      <div class="field">
+        <label>Período do dia</label>
+        <select id="fieldPeriod">
+          <option value="">— selecione —</option>
+          <option>Manhã</option>
+          <option>Tarde</option>
+          <option>Noite</option>
+          <option>Dia todo</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Horas de sono na noite anterior</label>
+      <select id="fieldSleep">
+        <option value="">— selecione —</option>
+        <option>Menos de 3h</option>
+        <option>3–5h</option>
+        <option>5–7h</option>
+        <option>7–9h (adequado)</option>
+        <option>Mais de 9h</option>
+        <option>Não dormiu</option>
+        <option>Não sei / não observei</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <span class="section-title">Estado de humor geral</span>
+    </div>
+
+    <div class="field">
+      <label>Como você descreveria o humor predominante hoje?</label>
+      <div class="mood-grid" id="moodGrid">
+        <div class="mood-option" data-mood="Estável" onclick="selectMood(this)">
+          <span class="emoji">😌</span><span class="mood-name">Estável</span>
+        </div>
+        <div class="mood-option" data-mood="Triste" onclick="selectMood(this)">
+          <span class="emoji">😔</span><span class="mood-name">Triste</span>
+        </div>
+        <div class="mood-option" data-mood="Irritável" onclick="selectMood(this)">
+          <span class="emoji">😤</span><span class="mood-name">Irritável</span>
+        </div>
+        <div class="mood-option" data-mood="Eufórico" onclick="selectMood(this)">
+          <span class="emoji">🤩</span><span class="mood-name">Eufórico</span>
+        </div>
+        <div class="mood-option" data-mood="Ansioso" onclick="selectMood(this)">
+          <span class="emoji">😰</span><span class="mood-name">Ansioso</span>
+        </div>
+        <div class="mood-option" data-mood="Apático" onclick="selectMood(this)">
+          <span class="emoji">😶</span><span class="mood-name">Apático</span>
+        </div>
+        <div class="mood-option" data-mood="Misto" onclick="selectMood(this)">
+          <span class="emoji">🌀</span><span class="mood-name">Misto</span>
+        </div>
+        <div class="mood-option" data-mood="Grandioso" onclick="selectMood(this)">
+          <span class="emoji">👑</span><span class="mood-name">Grandioso</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Intensidade do humor (comparado ao habitual)</label>
+      <div class="scale-wrap">
+        <div class="scale-row">
+          <span class="scale-label">Intensidade geral</span>
+          <div class="scale-buttons" id="scale-intensity"></div>
+        </div>
+        <div class="scale-row">
+          <span class="scale-label">Variação ao longo do dia</span>
+          <div class="scale-buttons" id="scale-variation"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">03</span>
+      <span class="section-title">Comportamento e atividade</span>
+    </div>
+
+    <div class="field">
+      <label>Nível de energia / atividade</label>
+      <div class="scale-wrap">
+        <div class="scale-row">
+          <span class="scale-label">Energia observada</span>
+          <div class="scale-buttons" id="scale-energy"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Comportamentos observados (marque todos que se aplicam)</label>
+      <div class="chips" id="behaviorChips">
+        <div class="chip" onclick="toggleChip(this)">Fala acelerada</div>
+        <div class="chip" onclick="toggleChip(this)">Pensamento acelerado</div>
+        <div class="chip" onclick="toggleChip(this)">Impulsividade</div>
+        <div class="chip" onclick="toggleChip(this)">Gastos excessivos</div>
+        <div class="chip" onclick="toggleChip(this)">Desinibição sexual</div>
+        <div class="chip" onclick="toggleChip(this)">Grandiosidade / euforia</div>
+        <div class="chip" onclick="toggleChip(this)">Irritabilidade intensa</div>
+        <div class="chip" onclick="toggleChip(this)">Choro frequente</div>
+        <div class="chip" onclick="toggleChip(this)">Isolamento social</div>
+        <div class="chip" onclick="toggleChip(this)">Recusa de comer</div>
+        <div class="chip" onclick="toggleChip(this)">Hiperfoco em tarefas</div>
+        <div class="chip" onclick="toggleChip(this)">Paranoia / desconfiança</div>
+        <div class="chip" onclick="toggleChip(this)">Agitação motora</div>
+        <div class="chip" onclick="toggleChip(this)">Prostração / apatia</div>
+        <div class="chip" onclick="toggleChip(this)">Alucinações / pensamento mágico</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tomou a medicação?</label>
+      <select id="fieldMed">
+        <option value="">— selecione —</option>
+        <option>Sim, todas as doses</option>
+        <option>Parcialmente</option>
+        <option>Não tomou</option>
+        <option>Não sei</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">04</span>
+      <span class="section-title">Sinais de alerta específicos</span>
+    </div>
+
+    <div class="field">
+      <label>Sinais de alerta presentes (marque se observou)</label>
+      <div class="chips" id="warnChips">
+        <div class="chip warn-chip" onclick="toggleChip(this)">Sem dormir por 24h+</div>
+        <div class="chip warn-chip" onclick="toggleChip(this)">Falas sobre grandiosidade extrema</div>
+        <div class="chip warn-chip" onclick="toggleChip(this)">Comportamento de risco (direção, sexo sem proteção)</div>
+        <div class="chip warn-chip" onclick="toggleChip(this)">Agressividade verbal ou física</div>
+        <div class="chip warn-chip" onclick="toggleChip(this)">Pensamentos de autolesão ou suicídio</div>
+        <div class="chip warn-chip" onclick="toggleChip(this)">Recusa total da medicação</div>
+        <div class="chip warn-chip" onclick="toggleChip(this)">Pensamentos desorganizados / fuga de ideias</div>
+        <div class="chip warn-chip" onclick="toggleChip(this)">Contato com realidade prejudicado</div>
+      </div>
+    </div>
+
+    <!-- RISK METER -->
+    <div class="risk-display" id="riskDisplay">
+      <div class="risk-label-col">
+        <div class="risk-title">Índice de risco estimado</div>
+        <div class="risk-value" id="riskValue">—</div>
+        <div class="risk-note" id="riskNote">Preencha o formulário para calcular</div>
+      </div>
+      <div class="risk-bar-wrap">
+        <div class="risk-bar-bg"><div class="risk-bar-fill" id="riskBar"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">05</span>
+      <span class="section-title">Observações livres</span>
+    </div>
+
+    <div class="field">
+      <label>O que mais chamou atenção hoje? (comportamento, falas, situações)</label>
+      <textarea id="fieldObs" placeholder="Descreva livremente. Ex.: 'Ficou acordada até as 3h fazendo planos de viagem', 'Disse que vai abrir um negócio amanhã', 'Chorou durante uma hora sem conseguir explicar por quê'..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Contexto externo relevante (estresse, eventos, conflitos)</label>
+      <textarea id="fieldContext" placeholder="Ex.: discussão familiar, mudança de rotina, notícia impactante, interação com ex..."></textarea>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="saveEntry()">💾 Salvar registro</button>
+    <button class="btn btn-secondary" onclick="clearForm()">↺ Limpar</button>
+    <button class="btn btn-secondary" onclick="openExport()">📋 Gerar relatório para psiquiatra</button>
+  </div>
+
+  <!-- HISTÓRICO -->
+  <div class="history-wrap">
+    <div class="history-header">
+      <span class="history-title">Registros anteriores</span>
+      <button class="btn btn-secondary" style="font-size:0.75rem; padding:0.4rem 0.75rem;" onclick="renderHistory()">↻ Atualizar</button>
+    </div>
+    <div id="historyList"><div class="empty-state">Nenhum registro salvo ainda.</div></div>
+  </div>
+</div>
+
+<!-- MODAL EXPORT -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <h2>Relatório para psiquiatra</h2>
+    <p>Copie o texto abaixo e envie por e-mail, WhatsApp ou prontuário digital. Inclui todos os registros salvos.</p>
+    <div class="report-box" id="reportBox"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="copyReport()">📋 Copiar relatório</button>
+      <button class="btn btn-secondary" onclick="closeExport()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────
+const SCALES = {
+  intensity: { label: 'Intensidade', el: 'scale-intensity' },
+  variation:  { label: 'Variação',   el: 'scale-variation'  },
+  energy:     { label: 'Energia',    el: 'scale-energy'     },
+};
+const scaleValues = { intensity: 0, variation: 0, energy: 0 };
+let selectedMood = '';
+
+// ── INIT ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('fieldDate').value = new Date().toISOString().split('T')[0];
+  buildScales();
+  renderHistory();
+  document.querySelectorAll('.chip, .mood-option, .scale-btn').forEach(() => {});
+  // Live risk update
+  document.querySelectorAll('select, textarea, input').forEach(el => {
+    el.addEventListener('change', updateRisk);
+    el.addEventListener('input', updateRisk);
+  });
+});
+
+// ── SCALES ─────────────────────────────────────────────
+function buildScales() {
+  Object.entries(SCALES).forEach(([key, cfg]) => {
+    const container = document.getElementById(cfg.el);
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'scale-btn';
+      btn.textContent = i;
+      btn.dataset.key = key;
+      btn.dataset.val = i;
+      btn.onclick = () => {
+        scaleValues[key] = i;
+        container.querySelectorAll('.scale-btn').forEach(b => b.className = 'scale-btn');
+        const cls = i <= 2 ? 'active-low' : i === 3 ? 'active-mid' : i === 4 ? 'active-high' : 'active-crit';
+        btn.classList.add(cls);
+        updateRisk();
+      };
+      container.appendChild(btn);
+    }
+  });
+}
+
+// ── MOOD ──────────────────────────────────────────────
+function selectMood(el) {
+  document.querySelectorAll('.mood-option').forEach(m => m.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedMood = el.dataset.mood;
+  updateRisk();
+}
+
+// ── CHIPS ─────────────────────────────────────────────
+function toggleChip(el) {
+  el.classList.toggle('selected');
+  updateRisk();
+}
+
+function getSelectedChips(containerId) {
+  return [...document.querySelectorAll(`#${containerId} .chip.selected`)].map(c => c.textContent);
+}
+
+// ── RISK CALC ─────────────────────────────────────────
+function calcRisk() {
+  let score = 0;
+  const warn = getSelectedChips('warnChips').length;
+  const behaviors = getSelectedChips('behaviorChips').length;
+  const sleep = document.getElementById('fieldSleep').value;
+  const med = document.getElementById('fieldMed').value;
+  const mood = selectedMood;
+
+  // warn chips = peso alto
+  score += warn * 20;
+  // behaviors
+  score += behaviors * 5;
+  // sleep
+  if (sleep === 'Menos de 3h' || sleep === 'Não dormiu') score += 20;
+  else if (sleep === '3–5h') score += 10;
+  // medication
+  if (med === 'Não tomou') score += 20;
+  else if (med === 'Parcialmente') score += 8;
+  // mood
+  if (['Eufórico','Grandioso','Misto'].includes(mood)) score += 15;
+  else if (['Irritável','Ansioso'].includes(mood)) score += 8;
+  // scales
+  if (scaleValues.intensity >= 4) score += 10;
+  if (scaleValues.energy >= 4) score += 10;
+
+  return Math.min(score, 100);
+}
+
+function updateRisk() {
+  const score = calcRisk();
+  const bar = document.getElementById('riskBar');
+  const val = document.getElementById('riskValue');
+  const note = document.getElementById('riskNote');
+  const banner = document.getElementById('alertBanner');
+  const alertTitle = document.getElementById('alertTitle');
+  const alertBody = document.getElementById('alertBody');
+
+  bar.style.width = score + '%';
+
+  if (score === 0) {
+    val.textContent = '—';
+    val.style.color = 'var(--text-muted)';
+    note.textContent = 'Preencha o formulário para calcular';
+    bar.style.background = 'var(--border)';
+    banner.classList.remove('visible');
+    return;
+  }
+
+  if (score < 25) {
+    val.textContent = 'Baixo';
+    val.style.color = 'var(--ok)';
+    note.textContent = 'Sem sinais preocupantes no momento.';
+    bar.style.background = 'var(--ok)';
+    banner.classList.remove('visible');
+  } else if (score < 50) {
+    val.textContent = 'Moderado';
+    val.style.color = 'var(--yellow)';
+    note.textContent = 'Atenção aumentada recomendada. Monitore de perto.';
+    bar.style.background = 'var(--yellow)';
+    banner.classList.remove('visible');
+  } else if (score < 75) {
+    val.textContent = 'Alto';
+    val.style.color = 'var(--warn)';
+    note.textContent = 'Considere entrar em contato com a psiquiatra em breve.';
+    bar.style.background = 'var(--warn)';
+    alertTitle.textContent = 'Indicadores de risco elevado identificados';
+    alertBody.textContent = 'Os sinais registrados nesta sessão sugerem uma possível mudança de estado. Recomenda-se contato com a psiquiatra dentro das próximas 24–48h.';
+    banner.classList.add('visible');
+  } else {
+    val.textContent = 'Crítico';
+    val.style.color = 'var(--alert)';
+    note.textContent = 'Entre em contato com a psiquiatra hoje.';
+    bar.style.background = 'var(--alert)';
+    alertTitle.textContent = '⚠️ Sinais críticos — contato imediato recomendado';
+    alertBody.textContent = 'Este registro apresenta múltiplos sinais de alerta graves. Entre em contato com a psiquiatra ou equipe de saúde o quanto antes. Em casos de risco imediato, considere atendimento de urgência.';
+    banner.classList.add('visible');
+  }
+}
+
+// ── SAVE ──────────────────────────────────────────────
+function saveEntry() {
+  const date = document.getElementById('fieldDate').value;
+  if (!date) { alert('Informe a data antes de salvar.'); return; }
+
+  const entry = {
+    id: Date.now(),
+    date,
+    period: document.getElementById('fieldPeriod').value,
+    sleep: document.getElementById('fieldSleep').value,
+    mood: selectedMood,
+    intensity: scaleValues.intensity,
+    variation: scaleValues.variation,
+    energy: scaleValues.energy,
+    behaviors: getSelectedChips('behaviorChips'),
+    warnings: getSelectedChips('warnChips'),
+    medication: document.getElementById('fieldMed').value,
+    observations: document.getElementById('fieldObs').value,
+    context: document.getElementById('fieldContext').value,
+    riskScore: calcRisk(),
+  };
+
+  const entries = loadEntries();
+  entries.unshift(entry);
+  localStorage.setItem('humor_entries', JSON.stringify(entries));
+  renderHistory();
+  clearForm();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function loadEntries() {
+  try { return JSON.parse(localStorage.getItem('humor_entries') || '[]'); } catch { return []; }
+}
+
+// ── HISTORY ───────────────────────────────────────────
+function renderHistory() {
+  const entries = loadEntries();
+  const container = document.getElementById('historyList');
+  if (!entries.length) {
+    container.innerHTML = '<div class="empty-state">Nenhum registro salvo ainda.</div>';
+    return;
+  }
+  container.innerHTML = entries.map(e => {
+    const badge = riskBadge(e.riskScore);
+    const preview = [
+      e.mood && `Humor: ${e.mood}`,
+      e.sleep && `Sono: ${e.sleep}`,
+      e.warnings.length && `⚠️ ${e.warnings.slice(0,2).join(', ')}${e.warnings.length > 2 ? '...' : ''}`,
+    ].filter(Boolean).join(' · ');
+    return `
+    <div class="entry-card" onclick="viewEntry(${e.id})">
+      <div class="entry-card-header">
+        <span class="entry-date">${formatDate(e.date)} ${e.period ? '· ' + e.period : ''}</span>
+        <span class="entry-risk-badge ${badge.cls}">${badge.label}</span>
+      </div>
+      <div class="entry-preview">${preview || 'Registro salvo.'}</div>
+    </div>`;
+  }).join('');
+}
+
+function riskBadge(score) {
+  if (!score || score < 25) return { cls: 'badge-low', label: 'Baixo' };
+  if (score < 50) return { cls: 'badge-moderate', label: 'Moderado' };
+  if (score < 75) return { cls: 'badge-high', label: 'Alto' };
+  return { cls: 'badge-critical', label: 'Crítico' };
+}
+
+function formatDate(str) {
+  if (!str) return '';
+  const [y,m,d] = str.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function viewEntry(id) {
+  const e = loadEntries().find(x => x.id === id);
+  if (!e) return;
+  alert(`Registro de ${formatDate(e.date)}\n\nHumor: ${e.mood || '—'}\nSono: ${e.sleep || '—'}\nMedicação: ${e.medication || '—'}\nRisco: ${riskBadge(e.riskScore).label}\n\nComportamentos: ${e.behaviors.join(', ') || 'nenhum'}\nAlertas: ${e.warnings.join(', ') || 'nenhum'}\n\nObservações:\n${e.observations || '—'}\n\nContexto:\n${e.context || '—'}`);
+}
+
+// ── CLEAR ─────────────────────────────────────────────
+function clearForm() {
+  document.getElementById('fieldDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('fieldPeriod').value = '';
+  document.getElementById('fieldSleep').value = '';
+  document.getElementById('fieldMed').value = '';
+  document.getElementById('fieldObs').value = '';
+  document.getElementById('fieldContext').value = '';
+  document.querySelectorAll('.chip.selected').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.mood-option.selected').forEach(m => m.classList.remove('selected'));
+  document.querySelectorAll('.scale-btn').forEach(b => b.className = 'scale-btn');
+  Object.keys(scaleValues).forEach(k => scaleValues[k] = 0);
+  selectedMood = '';
+  updateRisk();
+  document.getElementById('alertBanner').classList.remove('visible');
+}
+
+// ── EXPORT ────────────────────────────────────────────
+function openExport() {
+  const entries = loadEntries();
+  if (!entries.length) { alert('Nenhum registro para exportar.'); return; }
+
+  const lines = [];
+  lines.push('RELATÓRIO DE MONITORAMENTO DE HUMOR');
+  lines.push('Gerado em: ' + new Date().toLocaleString('pt-BR'));
+  lines.push('Período: ' + formatDate(entries[entries.length-1].date) + ' a ' + formatDate(entries[0].date));
+  lines.push('Total de registros: ' + entries.length);
+  lines.push('');
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+  const criticals = entries.filter(e => e.riskScore >= 75);
+  const highs = entries.filter(e => e.riskScore >= 50 && e.riskScore < 75);
+  if (criticals.length) lines.push(`⚠ REGISTROS CRÍTICOS: ${criticals.length} (em ${criticals.map(e=>formatDate(e.date)).join(', ')})`);
+  if (highs.length) lines.push(`! REGISTROS DE RISCO ALTO: ${highs.length}`);
+  lines.push('');
+
+  entries.forEach(e => {
+    lines.push(`── ${formatDate(e.date)} ${e.period ? '(' + e.period + ')' : ''} ── Risco: ${riskBadge(e.riskScore).label.toUpperCase()}`);
+    if (e.mood) lines.push(`  Humor: ${e.mood}`);
+    if (e.sleep) lines.push(`  Sono: ${e.sleep}`);
+    if (e.medication) lines.push(`  Medicação: ${e.medication}`);
+    if (e.intensity) lines.push(`  Intensidade/Energia: ${e.intensity}/5 · ${e.energy}/5`);
+    if (e.behaviors.length) lines.push(`  Comportamentos: ${e.behaviors.join(', ')}`);
+    if (e.warnings.length) lines.push(`  ⚠ ALERTAS: ${e.warnings.join(', ')}`);
+    if (e.observations) lines.push(`  Observações: ${e.observations}`);
+    if (e.context) lines.push(`  Contexto: ${e.context}`);
+    lines.push('');
+  });
+
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('Relatório gerado pelo Diário de Humor (monitoramento do cuidador).');
+  lines.push('Não substitui avaliação clínica profissional.');
+
+  document.getElementById('reportBox').textContent = lines.join('\n');
+  document.getElementById('exportModal').classList.add('open');
+}
+
+function closeExport() {
+  document.getElementById('exportModal').classList.remove('open');
+}
+
+function copyReport() {
+  const text = document.getElementById('reportBox').textContent;
+  navigator.clipboard.writeText(text).then(() => alert('Relatório copiado! Cole no e-mail ou WhatsApp da psiquiatra.'));
+}
+</script>
+</body>
+</html>
